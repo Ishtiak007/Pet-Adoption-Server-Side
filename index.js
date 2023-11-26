@@ -31,6 +31,7 @@ async function run() {
 
     const categoryCollection = client.db("petAdoptionDB").collection("petCategory");
     const reviewsCollection = client.db("petAdoptionDB").collection("reviews");
+    const petListingCollection = client.db("petAdoptionDB").collection("petListing");
 
 
     // category get operation
@@ -43,6 +44,20 @@ async function run() {
         const result = await reviewsCollection.find().toArray();
         res.send(result);
     });
+
+
+    // petListing api
+    app.get('/petListing',async(req,res)=>{
+        const filter = req.query
+        const options ={
+            sort :{
+                date : -1
+            }
+        };
+        const cursor = petListingCollection.find(filter,options);
+        const result =await cursor.toArray();
+        res.send(result);
+    })
 
 
 
