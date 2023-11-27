@@ -34,6 +34,7 @@ async function run() {
     const petListingCollection = client.db("petAdoptionDB").collection("petListing");
     const adoptionUsersCollection = client.db("petAdoptionDB").collection("adoptionUsers");
     const campaignsCollection = client.db("petAdoptionDB").collection("campaigns");
+    const usersCollection = client.db("petAdoptionDB").collection("users");
 
 
     // category get operation
@@ -74,6 +75,11 @@ async function run() {
         const result =await adoptionUsersCollection.insertOne(adoptionUser);
         res.send(result);
     })
+
+
+
+
+
    
 
     //campaigns related api
@@ -94,6 +100,21 @@ async function run() {
         const result = await campaignsCollection.findOne(query);
         res.send(result);
     });
+
+
+
+
+    // user related api
+    app.post('/users',async(req,res)=>{
+        const user = req.body;
+      const query ={email: user.email}
+      const existingUser = await usersCollection.findOne(query);
+      if(existingUser){
+        return res.send({message: 'This User already exists', insertedId : null})
+      }
+      const result = await usersCollection.insertOne(user);
+      res.send(result);
+    })
 
 
 
