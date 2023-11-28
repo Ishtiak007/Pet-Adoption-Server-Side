@@ -92,6 +92,11 @@ async function run() {
 
 
     // petListing api
+    app.post('/petListing',async(req,res)=>{
+        const pets = req.body;
+        const result =await petListingCollection.insertOne(pets);
+        res.send(result);
+    });
     app.get('/petListing',async(req,res)=>{
         const filter = req.query
         const options ={
@@ -125,6 +130,11 @@ async function run() {
    
 
     //campaigns related api
+    app.post('/campaigns',async(req,res)=>{
+        const donationCampaign = req.body;
+        const result =await campaignsCollection.insertOne(donationCampaign);
+        res.send(result);
+    })
     app.get('/campaigns',async(req,res)=>{
         const filter = req.query
         const options ={
