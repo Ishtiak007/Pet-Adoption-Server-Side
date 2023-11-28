@@ -92,11 +92,6 @@ async function run() {
 
 
     // petListing api
-    app.post('/petListing',async(req,res)=>{
-        const pets = req.body;
-        const result =await petListingCollection.insertOne(pets);
-        res.send(result);
-    });
     app.get('/petListing',async(req,res)=>{
         const filter = req.query
         const options ={
@@ -114,6 +109,36 @@ async function run() {
         const result = await petListingCollection.findOne(query);
         res.send(result);
     });
+    app.post('/petListing',async(req,res)=>{
+        const pets = req.body;
+        const result =await petListingCollection.insertOne(pets);
+        res.send(result);
+    });
+    app.delete('/petListing/:id',verifyToken,verifyAdmin, async(req,res)=>{
+        const id = req.params.id;
+        const query = {_id: new ObjectId(id)}
+        const result = await petListingCollection.deleteOne(query);
+        res.send(result);
+    });
+    app.patch('/petListing/:id', async(req,res)=>{
+        const pet = req.body;
+        const id = req.params.id;
+        const filter = {_id : new ObjectId(id)}
+        const updatedDoc={
+          $set:{
+            image : pet.image,
+            petName : pet.petName,
+            category: pet.category,
+            petAge: pet.petAge,
+            petLocation: pet.petLocation,
+            data : pet.date,
+            shortDescription: pet.shortDescription,
+            longDescription: pet.longDescription
+          }
+        }
+        const result = await petListingCollection.updateOne(filter,updatedDoc);
+        res.send(result);
+    })
 
 
     // pet Adoption request user
