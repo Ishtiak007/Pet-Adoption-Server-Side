@@ -40,6 +40,9 @@ async function run() {
 
 
 
+
+
+
     //JWT related api
     app.post('/jwt',async(req,res)=>{
         const user = req.body;
@@ -64,6 +67,9 @@ async function run() {
 
 
 
+
+
+
      // verify Admin
     const verifyAdmin = async(req,res, next)=>{
     const email = req.decoded.email;
@@ -75,6 +81,9 @@ async function run() {
     }
         next();
     }
+
+
+
 
 
 
@@ -91,6 +100,9 @@ async function run() {
     });
 
 
+
+
+
     // petListing api
     app.get('/petListing',async(req,res)=>{
         const filter = req.query
@@ -103,6 +115,14 @@ async function run() {
         const result =await cursor.toArray();
         res.send(result);
     });
+    app.get('/petListing', async (req,res)=>{
+          let query = {}
+          if(req.query?.email){
+              query = {email : req.query.email}
+          }
+          const result = await petListingCollection.find(query).toArray();
+          res.send(result);
+      });
     app.get('/petListing/:id', async(req,res)=>{
         const id = req.params.id;
         const query = {_id: new ObjectId(id)}
@@ -114,7 +134,7 @@ async function run() {
         const result =await petListingCollection.insertOne(pets);
         res.send(result);
     });
-    app.delete('/petListing/:id',verifyToken,verifyAdmin, async(req,res)=>{
+    app.delete('/petListing/:id',verifyToken, async(req,res)=>{
         const id = req.params.id;
         const query = {_id: new ObjectId(id)}
         const result = await petListingCollection.deleteOne(query);
@@ -141,12 +161,22 @@ async function run() {
     })
 
 
+
+
+
+
+
     // pet Adoption request user
     app.post('/adoptionUsers',async(req,res)=>{
         const adoptionUser = req.body;
         const result =await adoptionUsersCollection.insertOne(adoptionUser);
         res.send(result);
-    })
+    });
+    app.get('/adoptionUsers',async(req,res)=>{
+        const result = await adoptionUsersCollection.find().toArray();
+        res.send(result);
+    });
+
 
 
 
@@ -171,12 +201,46 @@ async function run() {
         const result =await cursor.toArray();
         res.send(result);
     });
+    app.get('/campaigns', async (req,res)=>{
+        let query = {}
+        if(req.query?.email){
+            query = {email : req.query.email}
+        }
+        const result = await campaignsCollection.find(query).toArray();
+        res.send(result);
+    });
     app.get('/campaigns/:id', async(req,res)=>{
         const id = req.params.id;
         const query = {_id: new ObjectId(id)}
         const result = await campaignsCollection.findOne(query);
         res.send(result);
     });
+    app.delete('/campaigns/:id',verifyToken, async(req,res)=>{
+        const id = req.params.id;
+        const query = {_id: new ObjectId(id)}
+        const result = await campaignsCollection.deleteOne(query);
+        res.send(result);
+    });
+    app.patch('/campaigns/:id', async(req,res)=>{
+        const donationPet = req.body;
+        const id = req.params.id;
+        const filter = {_id : new ObjectId(id)}
+        const updatedDoc={
+          $set:{
+            image : donationPet.image,
+            petName : donationPet.petName,
+            maximumDonation: donationPet.maximumDonation,
+            highestTotal: donationPet.highestTotal,
+            lastData : donationPet.lastData,
+            shortDescription: donationPet.shortDescription,
+            longDescription: donationPet.longDescription
+          }
+        }
+        const result = await campaignsCollection.updateOne(filter,updatedDoc);
+        res.send(result);
+    })
+
+
 
 
 
@@ -226,6 +290,8 @@ async function run() {
         const result = await usersCollection.updateOne(filter,updatedDoc);
         res.send(result);
     });
+
+
 
 
 
