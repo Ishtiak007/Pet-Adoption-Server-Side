@@ -214,7 +214,7 @@ async function run() {
         const result =await cursor.toArray();
         res.send(result);
     });
-    app.get('/campaigns', async (req,res)=>{
+    app.get('/campaigns',verifyToken, async (req,res)=>{
         let query = {}
         if(req.query?.email){
             query = {email : req.query.email}
