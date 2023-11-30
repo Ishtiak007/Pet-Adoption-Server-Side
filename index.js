@@ -4,6 +4,7 @@ const cors = require('cors');
 const jwt = require('jsonwebtoken');
 const { MongoClient, ServerApiVersion,ObjectId } = require('mongodb');
 require('dotenv').config();
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const port = process.env.PORT || 5000;
 
 //Middleware
@@ -36,6 +37,7 @@ async function run() {
     const adoptionUsersCollection = client.db("petAdoptionDB").collection("adoptionUsers");
     const campaignsCollection = client.db("petAdoptionDB").collection("campaigns");
     const usersCollection = client.db("petAdoptionDB").collection("users");
+    const paymentCollection = client.db("petAdoptionDB").collection("payments");
 
 
 
@@ -291,6 +293,36 @@ async function run() {
         res.send(result);
     });
 
+
+
+
+
+
+    // Donation payment intent
+    app.post('/create-payment-intent',async(req,res)=>{
+        const {price}=req.body;
+        const amount = parseInt(price * 100);
+  
+        const paymentIntent = await stripe.paymentIntents.create({
+          amount : amount,
+          currency : 'usd',
+          payment_method_types:['card']
+        });
+        res.send({
+          clientSecret: paymentIntent.client_secret
+        })
+      });
+      // Donation payment related API for getting who donated
+    app.post('/payments', async (req, res) => {
+        const payment = req.body;
+        const paymentResult = await paymentCollection.insertOne(payment);
+  
+        res.send(paymentResult);
+    });
+      app.get('/payments',async(req,res)=>{
+        const result = await paymentCollection.find().toArray();
+        res.send(result)
+    });
 
 
 
