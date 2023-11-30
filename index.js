@@ -110,7 +110,7 @@ async function run() {
         const filter = req.query
         const options ={
             sort :{
-                date : -1
+                date : 1
             }
         };
         const cursor = petListingCollection.find(filter,options);
@@ -153,7 +153,7 @@ async function run() {
             category: pet.category,
             petAge: pet.petAge,
             petLocation: pet.petLocation,
-            data : pet.date,
+            date : pet.date,
             shortDescription: pet.shortDescription,
             longDescription: pet.longDescription
           }
@@ -207,7 +207,7 @@ async function run() {
         const filter = req.query
         const options ={
             sort :{
-                lastDate : -1
+                lastDate : 1
             }
         };
         const cursor = campaignsCollection.find(filter,options);
@@ -244,7 +244,7 @@ async function run() {
             petName : donationPet.petName,
             maximumDonation: donationPet.maximumDonation,
             highestTotal: donationPet.highestTotal,
-            lastData : donationPet.lastData,
+            lastDate : donationPet.lastDate,
             shortDescription: donationPet.shortDescription,
             longDescription: donationPet.longDescription
           }
